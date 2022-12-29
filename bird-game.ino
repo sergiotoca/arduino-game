@@ -5,8 +5,8 @@
 #define PIN_READWRITE 10
 #define PIN_CONTRAST 12
 
-#define SPRITE_RUN1 1
-#define SPRITE_RUN2 2
+#define SPRITE_FLY1 1
+#define SPRITE_FLY2 2
 #define SPRITE_MOVE 3
 #define SPRITE_MOVE_UPPER '.'         // Use the '.' character for the head
 #define SPRITE_MOVE_LOWER 4
@@ -23,8 +23,8 @@
 #define TERRAIN_UPPER_BLOCK 2
 
 #define HERO_POSITION_OFF 0          // Hero is invisible
-#define HERO_POSITION_RUN_LOWER_1 1  // Hero is running on lower row (pose 1)
-#define HERO_POSITION_RUN_LOWER_2 2  //                              (pose 2)
+#define HERO_POSITION_FLY_LOWER_1 1  // Hero is FLYning on lower row (pose 1)
+#define HERO_POSITION_FLY_LOWER_2 2  //                              (pose 2)
 
 #define HERO_POSITION_MOVE_1 3       // Starting to go Up 
 #define HERO_POSITION_MOVE_2 4       // Half-way up
@@ -35,8 +35,8 @@
 #define HERO_POSITION_MOVE_7 9       // Half-way down
 #define HERO_POSITION_MOVE_8 10      // About to land
 
-#define HERO_POSITION_RUN_UPPER_1 11 // Hero is running on upper row (pose 1)
-#define HERO_POSITION_RUN_UPPER_2 12 //                              (pose 2)
+#define HERO_POSITION_FLY_UPPER_1 11 // Hero is FLYning on upper row (pose 1)
+#define HERO_POSITION_FLY_UPPER_2 12 //                              (pose 2)
 
 LiquidCrystal lcd(11, 9, 6, 5, 4, 3);
 static char terrainUpper[TERRAIN_WIDTH + 1];
@@ -153,13 +153,13 @@ bool drawHero(byte position, char* terrainUpper, char* terrainLower, unsigned in
     case HERO_POSITION_OFF:
       upper = lower = SPRITE_TERRAIN_EMPTY;
       break;
-    case HERO_POSITION_RUN_LOWER_1:
+    case HERO_POSITION_FLY_LOWER_1:
       upper = SPRITE_TERRAIN_EMPTY;
-      lower = SPRITE_RUN1;
+      lower = SPRITE_FLY1;
       break;
-    case HERO_POSITION_RUN_LOWER_2:
+    case HERO_POSITION_FLY_LOWER_2:
       upper = SPRITE_TERRAIN_EMPTY;
-      lower = SPRITE_RUN2;
+      lower = SPRITE_FLY2;
       break;
     case HERO_POSITION_MOVE_1:
     case HERO_POSITION_MOVE_8:
@@ -178,12 +178,12 @@ bool drawHero(byte position, char* terrainUpper, char* terrainLower, unsigned in
       upper = SPRITE_MOVE;
       lower = SPRITE_TERRAIN_EMPTY;
       break;
-    case HERO_POSITION_RUN_UPPER_1:
-      upper = SPRITE_RUN1;
+    case HERO_POSITION_FLY_UPPER_1:
+      upper = SPRITE_FLY1;
       lower = SPRITE_TERRAIN_EMPTY;
       break;
-    case HERO_POSITION_RUN_UPPER_2:
-      upper = SPRITE_RUN2;
+    case HERO_POSITION_FLY_UPPER_2:
+      upper = SPRITE_FLY2;
       lower = SPRITE_TERRAIN_EMPTY;
       break;
   }
@@ -241,7 +241,7 @@ void setup(){
 }
 
 void loop(){
-  static byte heroPos = HERO_POSITION_RUN_LOWER_1;
+  static byte heroPos = HERO_POSITION_FLY_LOWER_1;
   static byte newTerrainType = TERRAIN_EMPTY;
   static byte newTerrainDuration = 1;
   static bool playing = false;
@@ -258,7 +258,7 @@ void loop(){
     blink = !blink;
     if (buttonPushed) {
       initializeGraphics();
-      heroPos = HERO_POSITION_RUN_LOWER_1;
+      heroPos = HERO_POSITION_FLY_LOWER_1;
       playing = true;
       buttonPushed = false;
       distance = 0;
@@ -282,24 +282,24 @@ void loop(){
   }
     
   if (buttonPushed) {
-    if (heroPos <= HERO_POSITION_RUN_LOWER_2) heroPos = HERO_POSITION_MOVE_1;
-    else if (heroPos >= HERO_POSITION_RUN_UPPER_1) heroPos = HERO_POSITION_MOVE_6;
+    if (heroPos <= HERO_POSITION_FLY_LOWER_2) heroPos = HERO_POSITION_MOVE_1;
+    else if (heroPos >= HERO_POSITION_FLY_UPPER_1) heroPos = HERO_POSITION_MOVE_6;
     buttonPushed = false;
   }  
 
   if (drawHero(heroPos, terrainUpper, terrainLower, distance >> 3)) {
     playing = false; // The hero collided with something. Too bad.
   } else {
-    if (heroPos == HERO_POSITION_RUN_LOWER_2 || heroPos == HERO_POSITION_MOVE_8) {
-      heroPos = HERO_POSITION_RUN_LOWER_1;
+    if (heroPos == HERO_POSITION_FLY_LOWER_2 || heroPos == HERO_POSITION_MOVE_8) {
+      heroPos = HERO_POSITION_FLY_LOWER_1;
     } //else if ((heroPos >= HERO_POSITION_MOVE_3 && heroPos <= HERO_POSITION_MOVE_5) && terrainLower[HERO_HORIZONTAL_POSITION] != SPRITE_TERRAIN_EMPTY) {
 	else if ((heroPos >= HERO_POSITION_MOVE_3 && heroPos <= HERO_POSITION_MOVE_5)) {
-    heroPos = HERO_POSITION_RUN_UPPER_1;
-    } //else if (heroPos >= HERO_POSITION_RUN_UPPER_1 && terrainLower[HERO_HORIZONTAL_POSITION] == SPRITE_TERRAIN_EMPTY) {
+    heroPos = HERO_POSITION_FLY_UPPER_1;
+    } //else if (heroPos >= HERO_POSITION_FLY_UPPER_1 && terrainLower[HERO_HORIZONTAL_POSITION] == SPRITE_TERRAIN_EMPTY) {
       //heroPos = HERO_POSITION_MOVE_5;
     //} 
-  else if (heroPos == HERO_POSITION_RUN_UPPER_2) {
-      heroPos = HERO_POSITION_RUN_UPPER_1;
+  else if (heroPos == HERO_POSITION_FLY_UPPER_2) {
+      heroPos = HERO_POSITION_FLY_UPPER_1;
     } else {
       ++heroPos;
     }
